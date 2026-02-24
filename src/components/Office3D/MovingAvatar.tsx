@@ -25,13 +25,15 @@ interface MovingAvatarProps {
   onPositionUpdate: (id: string, pos: Vector3) => void;
 }
 
-export default function MovingAvatar({ 
-  agent, 
-  state, 
-  officeBounds, 
-  obstacles, 
+const DEFAULT_STATE: AgentState = { id: '', status: 'idle' };
+
+export default function MovingAvatar({
+  agent,
+  state = DEFAULT_STATE,
+  officeBounds,
+  obstacles,
   otherAvatarPositions,
-  onPositionUpdate 
+  onPositionUpdate
 }: MovingAvatarProps) {
   const groupRef = useRef<Group>(null);
   

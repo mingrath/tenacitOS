@@ -17,7 +17,9 @@ interface AgentDeskProps {
   isSelected: boolean;
 }
 
-export default function AgentDesk({ agent, state, onClick, isSelected }: AgentDeskProps) {
+const DEFAULT_STATE: AgentState = { id: '', status: 'idle' };
+
+export default function AgentDesk({ agent, state = DEFAULT_STATE, onClick, isSelected }: AgentDeskProps) {
   const deskRef = useRef<Mesh>(null);
   const monitorRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
