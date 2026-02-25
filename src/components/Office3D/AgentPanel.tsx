@@ -10,8 +10,9 @@ interface AgentPanelProps {
 }
 
 export default function AgentPanel({ agent, state, onClose }: AgentPanelProps) {
+  const status = state?.status ?? 'idle';
   const getStatusColor = () => {
-    switch (state.status) {
+    switch (status) {
       case 'working': return 'text-green-500';
       case 'thinking': return 'text-blue-500 animate-pulse';
       case 'error': return 'text-red-500';
@@ -21,7 +22,7 @@ export default function AgentPanel({ agent, state, onClose }: AgentPanelProps) {
   };
 
   const getStatusBgColor = () => {
-    switch (state.status) {
+    switch (status) {
       case 'working': return 'bg-green-500/20';
       case 'thinking': return 'bg-blue-500/20';
       case 'error': return 'bg-red-500/20';
@@ -51,9 +52,9 @@ export default function AgentPanel({ agent, state, onClose }: AgentPanelProps) {
 
       {/* Status badge */}
       <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6 ${getStatusBgColor()}`}>
-        <div className={`w-2 h-2 rounded-full ${state.status === 'thinking' ? 'animate-pulse' : ''}`} style={{ backgroundColor: agent.color }}></div>
+        <div className={`w-2 h-2 rounded-full ${status === 'thinking' ? 'animate-pulse' : ''}`} style={{ backgroundColor: agent.color }}></div>
         <span className={`text-sm font-medium ${getStatusColor()}`}>
-          {state.status.toUpperCase()}
+          {status.toUpperCase()}
         </span>
       </div>
 

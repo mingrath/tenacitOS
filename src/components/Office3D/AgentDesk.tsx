@@ -17,22 +17,21 @@ interface AgentDeskProps {
   isSelected: boolean;
 }
 
-const DEFAULT_STATE: AgentState = { id: '', status: 'idle' };
-
-export default function AgentDesk({ agent, state = DEFAULT_STATE, onClick, isSelected }: AgentDeskProps) {
+export default function AgentDesk({ agent, state, onClick, isSelected }: AgentDeskProps) {
+  const status = state?.status ?? 'idle';
   const deskRef = useRef<Mesh>(null);
   const monitorRef = useRef<Mesh>(null);
   const [hovered, setHovered] = useState(false);
 
   // Animación de pulsación para estado "thinking"
   useFrame((frameState) => {
-    if (monitorRef.current && state.status === 'thinking') {
+    if (monitorRef.current && status === 'thinking') {
       monitorRef.current.scale.setScalar(1 + Math.sin(frameState.clock.elapsedTime * 2) * 0.05);
     }
   });
 
   const getStatusColor = () => {
-    switch (state.status) {
+    switch (status) {
       case 'working':
         return '#22c55e'; // green-500
       case 'thinking':
@@ -46,7 +45,7 @@ export default function AgentDesk({ agent, state = DEFAULT_STATE, onClick, isSel
   };
 
   const getMonitorEmissive = () => {
-    switch (state.status) {
+    switch (status) {
       case 'working':
         return '#15803d'; // darker green
       case 'thinking':
@@ -90,7 +89,7 @@ export default function AgentDesk({ agent, state = DEFAULT_STATE, onClick, isSel
         <meshStandardMaterial
           color={getStatusColor()}
           emissive={getMonitorEmissive()}
-          emissiveIntensity={state.status === 'idle' ? 0.1 : 0.5}
+          emissiveIntensity={status === 'idle' ? 0.1 : 0.5}
         />
       </Box>
 
@@ -146,8 +145,8 @@ export default function AgentDesk({ agent, state = DEFAULT_STATE, onClick, isSel
         anchorX="center"
         anchorY="middle"
       >
-        {state.status.toUpperCase()}
-        {state.model && ` • ${state.model}`}
+        {status.toUpperCase()}
+        {state?.model && ` • ${state.model}`}
       </Text>
 
       {/* Desk legs */}

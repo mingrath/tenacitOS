@@ -127,5 +127,10 @@ export default function FirstPersonControls({ moveSpeed = 5 }: FirstPersonContro
     camera.position.z = Math.max(-8, Math.min(8, camera.position.z));
   });
 
-  return <PointerLockControls ref={controlsRef} />;
+  return (
+    <PointerLockControls
+      ref={controlsRef}
+      onError={() => {/* user exited pointer lock before it completed — ignore SecurityError */}}
+    />
+  );
 }

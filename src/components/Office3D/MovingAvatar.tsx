@@ -25,18 +25,17 @@ interface MovingAvatarProps {
   onPositionUpdate: (id: string, pos: Vector3) => void;
 }
 
-const DEFAULT_STATE: AgentState = { id: '', status: 'idle' };
-
 export default function MovingAvatar({
   agent,
-  state = DEFAULT_STATE,
+  state,
   officeBounds,
   obstacles,
   otherAvatarPositions,
   onPositionUpdate
 }: MovingAvatarProps) {
+  const status = state?.status ?? 'idle';
   const groupRef = useRef<Group>(null);
-  
+
   // Posición inicial completamente aleatoria SIN colisiones
   const [initialPos] = useState(() => {
     let pos: Vector3;
@@ -68,7 +67,7 @@ export default function MovingAvatar({
 
   const [targetPos, setTargetPos] = useState(initialPos);
   const currentPos = useRef(initialPos.clone());
-  
+
   // Notificar posición inicial
   useEffect(() => {
     onPositionUpdate(agent.id, initialPos.clone());
@@ -118,20 +117,16 @@ export default function MovingAvatar({
       }
     };
 
-    // Idle: moverse más frecuentemente
-    // Working: moverse menos
-    // Thinking: moverse muy poco
-    // Error: quedarse quieto
     const getInterval = () => {
-      switch (state.status) {
+      switch (status) {
         case 'idle':
-          return 3000 + Math.random() * 3000; // 3-6s
+          return 3000 + Math.random() * 3000;
         case 'working':
-          return 8000 + Math.random() * 7000; // 8-15s
+          return 8000 + Math.random() * 7000;
         case 'thinking':
-          return 15000 + Math.random() * 10000; // 15-25s
+          return 15000 + Math.random() * 10000;
         case 'error':
-          return 30000; // casi quieto
+          return 30000;
         default:
           return 10000;
       }
@@ -140,18 +135,18 @@ export default function MovingAvatar({
     // Primer objetivo después de montar
     const timeout = setTimeout(getNewTarget, 1000);
     const interval = setInterval(getNewTarget, getInterval());
-    
+
     return () => {
       clearTimeout(timeout);
       clearInterval(interval);
     };
-  }, [state.status]);
+  }, [status]);
 
   // Mover suavemente hacia el objetivo
   useFrame((frameState, delta) => {
     if (!groupRef.current) return;
 
-    const speed = state.status === 'idle' ? 1.5 : 0.8; // idle se mueve más rápido
+    const speed = status === 'idle' ? 1.5 : 0.8;
     const moveSpeed = delta * speed;
 
     // Calcular nueva posición
@@ -187,9 +182,9 @@ export default function MovingAvatar({
       <VoxelAvatar
         agent={agent}
         position={[0, 0, 0]}
-        isWorking={state.status === 'working'}
-        isThinking={state.status === 'thinking'}
-        isError={state.status === 'error'}
+        isWorking={status === 'working'}
+        isThinking={status === 'thinking'}
+        isError={status === 'error'}
       />
     </group>
   );
